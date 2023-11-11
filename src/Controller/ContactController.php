@@ -21,32 +21,36 @@ class ContactController extends AbstractController
 
         $contacts = $contactRepository->findAll();
 
+        $contact = new Contact();
+        $form = $this->createForm(ContactFormType::class, $contact, [
+            'action' => $this->generateUrl('app_contact_create'),
+            'method' => 'POST',
+        ]);
+
         return $this->render('contact/index.html.twig', [
             'contacts' => $contacts,
+            'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/contact/new", name="app_contact_new")
+     * @Route("/contact/create", name="app_contact_create")
      */
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function createContact(Request $request, EntityManagerInterface $entityManager): Response
     {
         $contact = new Contact();
         
         $form = $this->createForm(ContactFormType::class, $contact);
 
-
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
-            $contact = $form->getData();
-            
-            $entityManager->persist($contact);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $contact = $form->getData();
+            $entityManager->persist($contact);
             $entityManager->flush();
 
-            return $this->redirectToRoute('contact_success');
+            return $this->redirectToRoute('app_contact');
         }
 
         
