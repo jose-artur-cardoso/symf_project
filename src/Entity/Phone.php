@@ -5,9 +5,11 @@ namespace App\Entity;
 use App\Repository\PhoneRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
+ * @UniqueEntity("number")
  */
 class Phone
 {
@@ -25,7 +27,7 @@ class Phone
     private $contact;
 
     /**
-     * @ORM\Column(type="string", length=15)
+     * @ORM\Column(type="string", length=15, unique=true)
      * @Assert\NotBlank
      * @Assert\Regex("/^\d{10}$/")
      */
