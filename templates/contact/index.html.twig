@@ -10,26 +10,30 @@
   <div class="p-2">Select all</div>
   <div class="ms-auto p-2">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
+    New contact
     </button>
   </div>
 </div>
 <table class="table table-striped">
   <thead>
     <tr class="table-primary">
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
+      <th scope="col">Name</th>
+      <th scope="col">E-mail</th>
+      <th scope="col">Phone numbers</th>
+      <th scope="col">Birthday</th>
     </tr>
   </thead>
   <tbody>
     {% for contact in contacts %}
     <tr>
-      <th scope="row">1</th>
       <td>{{ contact.name }}</td>
-      <td>Otto</td>
-      <td>@mdo</td>
+      <td>{{ contact.email }}</td>
+      <td>
+      {% for phone in contact.phones %}
+      {{ phone.number|format_number(locale='fr') }}
+      {% endfor %}
+      </td>
+      <td>{{ contact.birthday|date('d/m/yy') }} {% if contact.isBirthdayNear %} <i class="bi bi-bell"></i> {% endif %}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -47,7 +51,20 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        {{ form(form) }}
+        
+        {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+
+        <h2>Phones</h2>
+        <ul id="contact_phones" data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}">
+            {% for phoneForm in form.phones %}
+                <li>{{ form_row(phoneForm) }}</li>
+            {% endfor %}
+        </ul>
+        <a href="#" id="add_phone">Add a phone</a>
+
+        {{ form_end(form) }}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -57,8 +74,24 @@
   </div>
 </div>
 
-
-
-
 {% endblock %}
 
+
+{% block bottom_javascripts %}
+    {{ parent() }}
+    <script>
+        document.getElementById('add_phone').addEventListener('click', addPhone);
+
+        function addPhone() {
+            var collectionHolder = document.getElementById('contact_phones');
+            var prototype = collectionHolder.getAttribute('data-prototype');
+            var index = collectionHolder.children.length;
+
+            var newForm = prototype.replace(/__name__/g, index);
+            var newLi = document.createElement('li');
+            newLi.innerHTML = newForm;
+
+            collectionHolder.appendChild(newLi);
+        }
+    </script>
+{% endblock %}

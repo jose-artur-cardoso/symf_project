@@ -11,6 +11,7 @@ use App\Entity\Contact;
 use App\Form\ContactFormType;
 use Doctrine\ORM\EntityManagerInterface;
 
+
 class ContactController extends AbstractController
 {
     /**
@@ -18,8 +19,8 @@ class ContactController extends AbstractController
      */
     public function index(ContactRepository $contactRepository): Response
     {
-
-        $contacts = $contactRepository->findAll();
+        
+        $contacts = $contactRepository->findAllWithPhones();
 
         $contact = new Contact();
         $form = $this->createForm(ContactFormType::class, $contact, [
@@ -46,11 +47,18 @@ class ContactController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
+            foreach ($contact->getPhones() as $phone) {
+                $entityManager->persist($phone);
+            }
             $contact = $form->getData();
             $entityManager->persist($contact);
             $entityManager->flush();
 
+            flash()->addSuccess('The contact was inserted with success.');
+        
             return $this->redirectToRoute('app_contact');
+        } else {
+            flash()->addError('There was an error.');
         }
 
         

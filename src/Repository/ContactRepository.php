@@ -39,6 +39,15 @@ class ContactRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllWithPhones()
+    {
+        return $this->createQueryBuilder('e')
+            ->leftJoin('e.phones', 'r') // Replace 'relatedEntity' with the actual name of the association in YourEntity
+            ->addSelect('r') // This ensures that the related data is selected in the query
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Contact[] Returns an array of Contact objects
 //     */

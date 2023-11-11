@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PhoneRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
@@ -25,6 +26,8 @@ class Phone
 
     /**
      * @ORM\Column(type="string", length=15)
+     * @Assert\NotBlank
+     * @Assert\Regex("/^\d{10}$/")
      */
     private $number;
 

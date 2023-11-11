@@ -16,6 +16,11 @@
         {% endblock %}
     </head>
     <body>
+    {% for flash_message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ flash_message }}
+    </div>
+{% endfor %}
         {% block header %}
             <header class="p-3 mb-3 border-bottom">
                 <div class="container">
@@ -62,6 +67,9 @@
                 <span class="text-body-secondary">Place sticky footer content here.</span>
             </div>
         </footer>
+        {% endblock %}
+         {% block bottom_javascripts %}
+
         {% endblock %}
     </body>
 </html>

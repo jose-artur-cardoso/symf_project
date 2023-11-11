@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ContactRepository::class)
+ * @Assert\Cascade
  */
 class Contact
 {
@@ -41,7 +42,7 @@ class Contact
     private $birthday;
 
     /**
-     * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="contact", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="contact", cascade={"persist"}, orphanRemoval=true)
      */
     private $phones;
 
@@ -82,6 +83,13 @@ class Contact
     public function getBirthday(): ?\DateTimeInterface
     {
         return $this->birthday;
+    }
+
+    public function isBirthdayNear(): bool
+    {
+        $today = new \DateTime();
+        $timeToBirthday = $today->diff($this->getBirthday());
+        return $timeToBirthday->days <= 5;
     }
 
     public function setBirthday(\DateTimeInterface $birthday): self

@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,7 +19,17 @@ class ContactFormType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('email', EmailType::class)
-            ->add('birthday', DateType::class)
+            ->add('phones', CollectionType::class, [
+                'label' => 'Phones',
+                'entry_type' => PhoneFormType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            ->add('birthday', DateType::class, [
+                'format' => 'dd MMM yyyy',
+                'years' => range(1900, date('Y')),
+            ])
             ->add('Submit', SubmitType::class)
         ;
     }
