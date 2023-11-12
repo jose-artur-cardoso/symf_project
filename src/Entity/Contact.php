@@ -7,13 +7,33 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+// use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=ContactRepository::class)
  * @Assert\Cascade
  * @UniqueEntity("email")
+ * @ApiResource(
+ *      collectionOperations={
+ *          "get"
+ *      },
+ *      itemOperations={
+ *          "get"
+ *      },
+ *      attributes={
+ *          "normalization_context"={"groups"={"contacts_read"}},
+ *      }
+ * )
  */
+
+
+
 class Contact
 {
 
@@ -21,18 +41,21 @@ class Contact
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("contacts_read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
      * @Assert\NotBlank
+     * @Groups("contacts_read")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=100, unique=true)
      * @Assert\NotBlank
+     * @Groups("contacts_read") 
      */
     private $email;
 
@@ -40,11 +63,13 @@ class Contact
      * @ORM\Column(type="date")
      * @Assert\NotBlank
      * @Assert\Type("\DateTime")
+     * @Groups("contacts_read")
      */
     private $birthday;
 
     /**
      * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="contact", cascade={"persist"}, orphanRemoval=true)
+     * @Groups("contacts_read")
      */
     private $phones;
 
@@ -85,6 +110,15 @@ class Contact
     public function getBirthday(): ?\DateTimeInterface
     {
         return $this->birthday;
+    }
+
+    /**
+     * @SerializedName("birthday")
+     * @Groups({"contacts_read"})
+     */
+    public function getFormattedBirthday(): string
+    {
+        return $this->birthday->format('Y-m-d');
     }
 
     public function isBirthdayNear(): bool
