@@ -1,0 +1,37 @@
+ip: 192.168.56.56
+memory: 2048
+cpus: 2
+provider: virtualbox
+SpeakFriendAndEnter: true
+authorize: ~/.ssh/id_rsa.pub
+keys:
+    - ~/.ssh/id_rsa
+folders:
+    -
+        map: 'C:\symf_project'
+        to: /home/vagrant/code
+        type: nfs
+sites:
+    -
+        map: homestead.test
+        to: /home/vagrant/code/public
+        php: "7.4"
+        type: "apache"
+databases:
+    - homestead
+features:
+    -
+        mysql: true
+    -
+        mariadb: false
+    -
+        postgresql: false
+    -
+        ohmyzsh: false
+    -
+        webdriver: false
+services:
+    -
+        enabled: [mysql]
+name: symf-project
+hostname: symf-project
