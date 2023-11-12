@@ -33,7 +33,7 @@
       {{ phone.number|format_number(locale='fr') }}
       {% endfor %}
       </td>
-      <td>{{ contact.birthday|date('d/m/yy') }} {% if contact.isBirthdayNear %} <i class="bi bi-bell"></i> {% endif %}</td>
+      <td>{{ contact.birthday|date('d/m/Y') }} {% if contact.isBirthdayNear %} <i class="bi bi-bell"></i> {% endif %}</td>
     </tr>
     {% endfor %}
   </tbody>
