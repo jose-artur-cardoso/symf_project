@@ -6,10 +6,20 @@
 
 <h1 class="text-body-emphasis">All contacts</h1>
 
+
+{# Display errors for a specific field #}
+{# {% if form_errors(form.email) %}
+    <div class="alert alert-danger">
+        <strong>Error for {{ form.email.vars.label }}:</strong>
+        {{ form_errors(form.email) }}
+    </div>
+{% endif %} #}
+
+
 <div class="d-flex mb-3">
   <div class="p-2">Select all</div>
   <div class="ms-auto p-2">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
     New contact
     </button>
   </div>
@@ -17,6 +27,7 @@
 <table class="table table-striped">
   <thead>
     <tr class="table-primary">
+      <th></th>
       <th scope="col">Name</th>
       <th scope="col">E-mail</th>
       <th scope="col">Phone numbers</th>
@@ -26,6 +37,12 @@
   <tbody>
     {% for contact in contacts %}
     <tr>
+      <td class="checkRow">
+      
+      
+      {# {{ form_row(delForm.test) }} #}
+      <input type="checkbox" value="{{ contact.id }}">
+      </td>
       <td>{{ contact.name }}</td>
       <td>{{ contact.email }}</td>
       <td>
@@ -39,20 +56,17 @@
   </tbody>
 </table>
 
-
-
-
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <h1 class="modal-title fs-5" id="formModalLabel">New contact</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      
       <div class="modal-body">
-        
-        {{ form_start(form) }}
+      {{ form_start(form) }}        
         {{ form_row(form.name) }}
         {{ form_row(form.email) }}
 
@@ -64,12 +78,13 @@
         </ul>
         <a href="#" id="add_phone">Add a phone</a>
 
-        {{ form_end(form) }}
+      {{ form_end(form) }}  
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+      {# <div class="modal-footer">                  
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
       </div>
+       #}
     </div>
   </div>
 </div>
@@ -93,5 +108,36 @@
 
             collectionHolder.appendChild(newLi);
         }
-    </script>
+
+        $(document).ready(function() {
+            {% if openModal is defined %}
+                $('#formModal').modal('show');
+            {% endif %}
+        });
+        {# $(document).ready(function () {
+            $('#submitBtn').on('click', function () {
+                var form = $('.ajax-form');
+                $.ajax({
+                    url: form.attr('/contact/create'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.errors) {
+                            // Update modal content with errors
+                            // Example: display errors next to form fields
+                            $.each(response.errors, function (field, messages) {
+                                form.find('[name="' + field + '"]').after('<span class="text-danger">' + messages.join(', ') + '</span>');
+                            });
+                        } else {
+                            // Close the modal or perform other actions on successful form submission
+                            $('#yourModal').modal('hide');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        }); #}
+      </script>
 {% endblock %}
