@@ -21,3 +21,27 @@
 # More info: https://github.com/nodesource/distributions/blob/master/README.md#debinstall
 #curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
 #sudo apt-get install -y nodejs
+
+#!/bin/bash
+
+DB_NAME="homestead"
+DB_USER="homestead"
+DB_PASS="secret"
+
+# Symfony commands for database setup
+cd code
+echo "Running Symfony commands for database setup..."
+php bin/console doctrine:database:create --if-not-exists
+php bin/console doctrine:schema:update --force
+php bin/console doctrine:fixtures:load --no-interaction
+echo "Symfony commands executed successfully."
+
+# Run composer install
+echo "Running composer install..."
+composer install
+echo "Composer install completed successfully."
+
+# Run npm install
+echo "Running npm install..."
+npm install
+echo "npm install completed successfully."
