@@ -32,8 +32,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * )
  */
 
-
-
 class Contact
 {
 
@@ -71,7 +69,13 @@ class Contact
      * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="contact", cascade={"persist"}, orphanRemoval=true)
      * @Groups("contacts_read")
      */
-    private $phones;
+    private $phones;    
+    
+    /**
+     * @ORM\Column(type="array")
+     * @Groups("contacts_read")
+     */
+    private $phoneList;
 
     public function __construct()
     {
@@ -91,6 +95,18 @@ class Contact
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getPhoneList(): ?array
+    {
+        return $this->phoneList;
+    }
+
+    public function setPhoneList(array $phoneList): self
+    {
+        $this->phoneList = $phoneList;
 
         return $this;
     }
@@ -121,11 +137,24 @@ class Contact
         return $this->birthday->format('Y-m-d');
     }
 
-    public function isBirthdayNear(): bool
+    public function daysToBirthday(): int
     {
         $today = new \DateTime();
-        $timeToBirthday = $today->diff($this->getBirthday());
-        return $timeToBirthday->days <= 5;
+        
+        $birthday = $this->getBirthday();
+
+        // Change birthday to current year
+        $birthdayOnCurrentYear = $birthday->setDate(date('Y'), $birthday->format('m'), $birthday->format('d'));      
+        
+        // If birthday has already passed in the current year, add +1 year to the comparision. 
+
+        if($today > $birthdayOnCurrentYear)
+        {
+            $birthdayOnCurrentYear->modify('+1 year');
+        }
+        
+        $timeToBirthday = $today->diff($birthdayOnCurrentYear);
+        return $timeToBirthday->days;
     }
 
     public function setBirthday(\DateTimeInterface $birthday): self

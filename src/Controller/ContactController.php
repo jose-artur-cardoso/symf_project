@@ -65,9 +65,9 @@ class ContactController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            foreach ($contact->getPhones() as $phone) {
-                $entityManager->persist($phone);
-            }
+            // foreach ($contact->getPhones() as $phone) {
+            //     $entityManager->persist($phone);
+            // }
             $contact = $form->getData();
             $entityManager->persist($contact);
             $entityManager->flush();
@@ -78,6 +78,7 @@ class ContactController extends AbstractController
         }
         $contacts = $this->contactRepository->findAllWithPhones();
         flash()->addError('There was an error.'); 
+
         return $this->render('contact/index.html.twig', [
             'contacts' => $contacts,
             'form' => $form->createView(),

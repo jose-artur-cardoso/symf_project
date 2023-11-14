@@ -46,11 +46,13 @@
       <td>{{ contact.name }}</td>
       <td>{{ contact.email }}</td>
       <td>
-      {% for phone in contact.phones %}
-      {{ phone.number|format_number(locale='fr') }}
+      {% for phone in contact.phoneList %}
+      {{ phone|french_phone_format }}
       {% endfor %}
       </td>
-      <td>{{ contact.birthday|date('d/m/Y') }} {% if contact.isBirthdayNear %} <i class="bi bi-bell"></i> {% endif %}</td>
+      <td>
+      
+      {{ contact.birthday|date('d/m/Y') }} {% if contact.daysToBirthday <= 5 %} <i class="bi bi-bell" data-toggle="tooltip" data-placement="top" title="{{contact.daysToBirthday}} days to birthday"></i> {% endif %}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -66,17 +68,21 @@
       </div>
       
       <div class="modal-body">
+      {{ form_errors(form) }}
+
+
+
       {{ form_start(form) }}        
         {{ form_row(form.name) }}
         {{ form_row(form.email) }}
 
-        <h2>Phones</h2>
-        <ul id="contact_phones" data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}">
-            {% for phoneForm in form.phones %}
-                <li>{{ form_row(phoneForm) }}</li>
+        
+        <div id="contact_phones" data-prototype="{{ form_widget(form.phone_list.vars.prototype)|e('html_attr') }}">
+            {% for phoneListForm in form.phone_list %}
+                <div>{{ form_widget(phoneListForm) }}</div>
             {% endfor %}
-        </ul>
-        <a href="#" id="add_phone">Add a phone</a>
+        </div>
+        <a href="#" id="add_phone"><i class="bi bi-plus-circle-fill"></i> Add a phone</a>
 
       {{ form_end(form) }}  
       </div>
@@ -103,7 +109,7 @@
             var index = collectionHolder.children.length;
 
             var newForm = prototype.replace(/__name__/g, index);
-            var newLi = document.createElement('li');
+            var newLi = document.createElement('div');
             newLi.innerHTML = newForm;
 
             collectionHolder.appendChild(newLi);
@@ -114,6 +120,10 @@
                 $('#formModal').modal('show');
             {% endif %}
         });
+
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
         {# $(document).ready(function () {
             $('#submitBtn').on('click', function () {
                 var form = $('.ajax-form');
