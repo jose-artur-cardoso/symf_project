@@ -20,17 +20,7 @@ class ContactCheckType extends AbstractType
                 'mapped' => false,
                 'required' => false,
             ])
-            // Add other fields from Entity as needed
-            // Example: ->add('attribute', null, ['label' => 'Attribute'])
-            // Make sure to replace 'attribute' with your actual entity field name
-            // Repeat this for each field you want to display in the table
             ->add('deleteSelected', SubmitType::class, ['label' => 'Delete Selected']);
     }
 
-    // public function configureOptions(OptionsResolver $resolver): void
-    // {
-    //     $resolver->setDefaults([
-    //         'data_class' => Contact::class,
-    //     ]);
-    // }
 }

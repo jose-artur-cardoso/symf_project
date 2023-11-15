@@ -11,8 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Length;
+use App\Form\Type\PhoneType;
 
 class ContactFormType extends AbstractType
 {
@@ -21,16 +20,9 @@ class ContactFormType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('email', EmailType::class)
-            // ->add('phones', CollectionType::class, [
-            //     'label' => 'Phones',
-            //     'entry_type' => PhoneFormType::class,
-            //     'allow_add' => true,
-            //     'allow_delete' => true,
-            //     'by_reference' => false,
-            // ])
             ->add('phone_list', CollectionType::class, [
                 'label' => 'Phones',
-                'entry_type' => TextType::class,
+                'entry_type' => PhoneType::class, // Use PhoneType for phone_list
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,

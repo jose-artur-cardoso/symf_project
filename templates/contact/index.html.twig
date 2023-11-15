@@ -71,21 +71,14 @@
         {{ form_row(form.email) }}
         
         
-        <div id="contact_phones" data-prototype="{{ form_widget(form.phone_list.vars.prototype)|e('html_attr') }}">
-            {{ form_widget(form.phone_list) }}
-            {% for phoneListForm in form.phone_list %}
-                {{ form_row(phoneListForm, {'label': false}) }}
-            {% endfor %}
+        <div id="contact_phones" data-prototype="{{ form_widget(form.phone_list.vars.prototype)|e('html_attr') }}">          
+            {{ form_row(form.phone_list) }}
         </div>
         <a href="#" id="add_phone"><i class="bi bi-plus-circle-fill"></i> Add a phone</a>
 
       {{ form_end(form) }}  
+      
       </div>
-      {# <div class="modal-footer">                  
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-      </div>
-       #}
     </div>
   </div>
 </div>

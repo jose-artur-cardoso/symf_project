@@ -40,13 +40,6 @@ class ContactController extends AbstractController
             'action' => $this->generateUrl('app_contact_delete'),
             'method' => 'POST',
         ]);
-        // $delForm = $this->createForm(ContactCheckType::class, null, [
-        //     'dynamic_choices' => $contacts,
-        //     'action' => $this->generateUrl('app_contact_delete'),
-        //     'method' => 'POST',
-        // ]);
-
-
 
         return $this->render('contact/index.html.twig', [
             'contacts' => $contacts,
@@ -62,35 +55,33 @@ class ContactController extends AbstractController
     public function createContact(Request $request, EntityManagerInterface $entityManager): Response
     {
         try{
-            //do stuff here
+            $openModal = false;
+            $contact = new Contact();
+            $form = $this->createForm(ContactFormType::class, $contact);
+            $form->handleRequest($request);
+    
+            if ($form->isSubmitted() && $form->isValid()) {
+                
+                $contact = $form->getData();
+                $entityManager->persist($contact);
+                $entityManager->flush();
+    
+                flash()->addSuccess('The contact was inserted with success.');
+                return $this->redirectToRoute('app_contact');
+    
+            }
         }
         catch(\Exception $e){
-            error_log($e->getMessage());
+            flash()->addError('There was an error.'); 
+            $openModal = true;
         }
-        $contact = new Contact();
-
-        $form = $this->createForm(ContactFormType::class, $contact);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            
-            $contact = $form->getData();
-            $entityManager->persist($contact);
-            $entityManager->flush();
-
-            flash()->addSuccess('The contact was inserted with success.');
-            return $this->redirectToRoute('app_contact');
-
-        }
+        
         $contacts = $this->contactRepository->findAll();
-        flash()->addError('There was an error.'); 
 
         return $this->render('contact/index.html.twig', [
             'contacts' => $contacts,
             'form' => $form->createView(),
-            'openModal' => true,
-            // 'delForm' => $delForm->createView(),
+            'openModal' => $openModal,
         ]);
 
     }
