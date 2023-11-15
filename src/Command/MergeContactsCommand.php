@@ -14,6 +14,7 @@ use App\Entity\Contact;
 use App\Services\ArrayUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTime;
+use App\Repository\ContactRepository;
 
 
 class MergeContactsCommand extends Command
@@ -23,12 +24,14 @@ class MergeContactsCommand extends Command
 
     private $entityManager;
     private $arrayUtils;
+    private $contactRepository;
     
 
-    public function __construct(EntityManagerInterface $entityManager, ArrayUtils $arrayUtils)
+    public function __construct(EntityManagerInterface $entityManager, ArrayUtils $arrayUtils, ContactRepository $contactRepository)
     {
         $this->entityManager = $entityManager;
         $this->arrayUtils = $arrayUtils;
+        $this->contactRepository = $contactRepository;
 
         parent::__construct();
     }
@@ -52,7 +55,6 @@ class MergeContactsCommand extends Command
         foreach($contactCountWithSameName as $contact)
         {
             $output->writeln(sprintf('There are %s contacts with the name "%s":', $contact['nameCount'],$contact['name']));
-
             $question = new ConfirmationQuestion('Do you want to merge these users? (yes/no) ', false);
 
             // If answer is yes
@@ -60,31 +62,44 @@ class MergeContactsCommand extends Command
 
                 // Find the contacts with the same name
                 $contactsWithSameName = $contactRepository->findByTheSameName($contact['name']);
+                $phoneLists = $contactRepository->findPhoneListByTheSameName($contact['name']);
                 
+
+                $mergedPhoneList = array_reduce($phoneLists, function ($result, $current) {
+                    if (is_array($current['phoneList'])) {
+                        $result = array_merge($result, $current['phoneList']);
+                    }
+                    return $result;
+                }, []);
+
                 //Check if there are differences in email and birthday
                 $differences = $this->arrayUtils->getDifferencesBetweenArrays($contactsWithSameName);
-                
                 $data = [];
 
                 foreach($differences as $field)
                 {
-                    $fieldValues = array_column($contactsWithSameName, $field);
+                    if($field !== 'id')
+                    {
+                        $fieldValues = array_column($contactsWithSameName, $field);
                     
-                    $question = new ChoiceQuestion(
-                        'Select which value to keep, from this field: '.$field.'',
-                        $fieldValues,
-                        0
-                    );
-                    $question->setErrorMessage('Invalid choice.');
-
-                    $fieldValue = $this->getHelper('question')->ask($input, $output, $question);
-                    $output->writeln('You have just selected: '.$fieldValue);
-
-                    $data[$field] = $fieldValue;
+                        $question = new ChoiceQuestion(
+                            'Select which value to keep, from this field: '.$field.'',
+                            $fieldValues,
+                            0
+                        );
+                        $question->setErrorMessage('Invalid choice.');
+    
+                        $fieldValue = $this->getHelper('question')->ask($input, $output, $question);
+                        $output->writeln('You have just selected: '.$fieldValue);
+    
+                        $data[$field] = $fieldValue;
+                    }
 
                 }
                 
+                // Takes the data that is the same on both contacts and populates Data value with it.
                 $firstOccurrenceOfContact = $contactsWithSameName[0];
+                
                 foreach($firstOccurrenceOfContact as $key => $value)
                 {
                     if(!array_key_exists($key, $data))
@@ -94,11 +109,29 @@ class MergeContactsCommand extends Command
                         }
                 }
                 
+                // In case of birthday, it's necessary to convert to a DateTime format
                 if($data['birthday']) { $data['birthday'] = DateTime::createFromFormat('Y-m-d', $data['birthday']);}
+                
                 $mergedContact = new Contact();
                 $mergedContact->setValues($data);
-                dd($mergedContact);
-
+                $mergedContact->setPhoneList($mergedPhoneList);
+                
+                // If mergedContact is OK, we can delete all the duplicates
+                if($mergedContact)
+                {
+                    foreach($contactsWithSameName as $contact)
+                        {
+                            
+                            $contactToRemove = $this->contactRepository->find($contact['id']);
+                            if($contactToRemove)
+                                {
+                                    
+                                    $this->contactRepository->remove($contactToRemove);
+                                    $this->entityManager->flush();
+                                }
+                        }
+                }
+                
                 // Persist and flush the entity to save it to the database
                 $this->entityManager->persist($mergedContact);
                 $this->entityManager->flush();

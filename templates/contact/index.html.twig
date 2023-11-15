@@ -70,9 +70,11 @@
         {{ form_row(form.name) }}
         {{ form_row(form.email) }}
         
+        
         <div id="contact_phones" data-prototype="{{ form_widget(form.phone_list.vars.prototype)|e('html_attr') }}">
+            {{ form_widget(form.phone_list) }}
             {% for phoneListForm in form.phone_list %}
-                <div>{{ form_widget(phoneListForm) }}</div>
+                {{ form_row(phoneListForm, {'label': false}) }}
             {% endfor %}
         </div>
         <a href="#" id="add_phone"><i class="bi bi-plus-circle-fill"></i> Add a phone</a>
@@ -133,26 +135,32 @@
 
               contactCheckboxes.forEach(function(checkbox) {
                   checkbox.checked = selectAllCheckbox.checked;
+                  console.log("1");
                   });
           });
+
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          const deleteButton = document.getElementById('deleteButton');
+
+          checkboxes.forEach(function(checkbox) {
+              checkbox.addEventListener('change', function() {
+                  // Check if any of the checkboxes are checked
+                  const anyChecked = [...checkboxes].some(checkbox => checkbox.checked);
+                  
+                  if (anyChecked) {
+                    console.log("2");
+                      deleteButton.classList.remove('d-none');
+                  } else {
+                    console.log("3");
+                      deleteButton.classList.add('d-none');
+                  }
+              });
+          });
+
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('input[name="selected_contacts[]"]');
-            const deleteButton = document.getElementById('deleteButton');
 
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    // Check if any of the checkboxes are checked
-                    const anyChecked = [...checkboxes].some(checkbox => checkbox.checked);
-                    
-                    if (anyChecked) {
-                        deleteButton.classList.remove('d-none');
-                    } else {
-                        deleteButton.classList.add('d-none');
-                    }
-                });
-            });
         });
 
 

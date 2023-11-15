@@ -53,12 +53,21 @@ class ContactRepository extends ServiceEntityRepository
     public function findByTheSameName(string $name)
     {
         return $this->createQueryBuilder('c')
-            ->select('c.name, c.email, c.birthday')
+            ->select("c.id, c.name, c.email, c.birthday")
             ->where('c.name = :name')
             ->setParameter('name', $name)
             ->getQuery()
             ->getScalarResult();
+    }    
 
+    public function findPhoneListByTheSameName(string $name)
+    {
+        return $this->createQueryBuilder('c')
+            ->select("c.phoneList")
+            ->where('c.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult();
     }    
 
 //    /**
