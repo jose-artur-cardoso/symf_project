@@ -39,14 +39,27 @@ class ContactRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllWithPhones()
+    public function countByTheSameName()
     {
-        return $this->createQueryBuilder('e')
-            ->leftJoin('e.phones', 'r') // Replace 'relatedEntity' with the actual name of the association in YourEntity
-            ->addSelect('r') // This ensures that the related data is selected in the query
+        return $this->createQueryBuilder('c')
+            ->select('c.name, COUNT(c.id) as nameCount')
+            ->groupBy('c.name')
+            ->having('nameCount > 1')
             ->getQuery()
             ->getResult();
+
     }
+
+    public function findByTheSameName(string $name)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.name, c.email, c.birthday')
+            ->where('c.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getScalarResult();
+
+    }    
 
 //    /**
 //     * @return Contact[] Returns an array of Contact objects

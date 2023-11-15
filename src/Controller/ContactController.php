@@ -28,7 +28,7 @@ class ContactController extends AbstractController
     public function index(): Response
     {
         
-        $contacts = $this->contactRepository->findAllWithPhones();
+        $contacts = $this->contactRepository->findAll();
 
         $contact = new Contact();
         $form = $this->createForm(ContactFormType::class, $contact, [
@@ -36,6 +36,10 @@ class ContactController extends AbstractController
             'method' => 'POST',
         ]);
 
+        $formCheckBox = $this->createForm(ContactCheckType::class, null, [
+            'action' => $this->generateUrl('app_contact_delete'),
+            'method' => 'POST',
+        ]);
         // $delForm = $this->createForm(ContactCheckType::class, null, [
         //     'dynamic_choices' => $contacts,
         //     'action' => $this->generateUrl('app_contact_delete'),
@@ -47,6 +51,7 @@ class ContactController extends AbstractController
         return $this->render('contact/index.html.twig', [
             'contacts' => $contacts,
             'form' => $form->createView(),
+            'formCheckBox' => $formCheckBox->createView(),
             // 'delForm' => $delForm->createView(),
         ]);
     }
@@ -56,18 +61,20 @@ class ContactController extends AbstractController
      */
     public function createContact(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // dd($request);
+        try{
+            //do stuff here
+        }
+        catch(\Exception $e){
+            error_log($e->getMessage());
+        }
         $contact = new Contact();
-        
+
         $form = $this->createForm(ContactFormType::class, $contact);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            // foreach ($contact->getPhones() as $phone) {
-            //     $entityManager->persist($phone);
-            // }
             $contact = $form->getData();
             $entityManager->persist($contact);
             $entityManager->flush();
@@ -76,7 +83,7 @@ class ContactController extends AbstractController
             return $this->redirectToRoute('app_contact');
 
         }
-        $contacts = $this->contactRepository->findAllWithPhones();
+        $contacts = $this->contactRepository->findAll();
         flash()->addError('There was an error.'); 
 
         return $this->render('contact/index.html.twig', [
@@ -91,9 +98,26 @@ class ContactController extends AbstractController
     /**
     * @Route("/contact/delete", name="app_contact_delete")
     */
-    public function deleteContract(Request $request)
+    public function deleteContacts(Request $request, EntityManagerInterface $entityManager)
     {
-        dd($request);
+        try{
+            $selectedEntityIds = $request->get('selected_contacts');
+    
+            foreach ($selectedEntityIds as $entityId) {
+                $entity = $entityManager->getRepository(Contact::class)->find($entityId);
+                if ($entity) {
+                    $entityManager->remove($entity);
+                }
+            }
+            $entityManager->flush();
+            flash()->addSuccess('Contacts removed with success');
+        }
+        catch(\Exception $e){
+            flash()->addError('An error has occurred during the deletion of the contacts.');
+        }
+
+        return $this->redirectToRoute('app_contact');
+        
     }
 }
 

@@ -8,13 +8,14 @@ keys:
     - ~/.ssh/id_rsa
 folders:
     -
-        map: 'C:\symf_project'
-        to: /home/vagrant/code
-        type: nfs
+        map: ~/Documents/projects/symf_project
+        # map: 'C:\symf_project'
+        to: /home/vagrant/symf_project
+        # type: nfs
 sites:
     -
         map: homestead.test
-        to: /home/vagrant/code/public
+        to: /home/vagrant/symf_project/public
         php: "7.4"
         type: "apache"
 databases:
@@ -34,4 +35,4 @@ services:
     -
         enabled: [mysql]
 name: symf-project
-hostname: symf-project
+hostname: homestead

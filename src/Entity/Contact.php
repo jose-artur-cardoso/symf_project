@@ -65,12 +65,13 @@ class Contact
      */
     private $birthday;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="contact", cascade={"persist"}, orphanRemoval=true)
-     * @Groups("contacts_read")
-     */
-    private $phones;    
+    // /**
+    //  * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="contact", cascade={"persist"}, orphanRemoval=true)
+    //  * @Groups("contacts_read")
+    //  */
+    // private $phones;    
     
+
     /**
      * @ORM\Column(type="array")
      * @Groups("contacts_read")
@@ -80,6 +81,16 @@ class Contact
     public function __construct()
     {
         $this->phones = new ArrayCollection();
+    }
+
+    public function setValues(array $values): void
+    {
+        foreach ($values as $key => $value) {
+            $setter = 'set' . ucfirst($key); // Create the setter method name
+            if (method_exists($this, $setter)) {
+                $this->$setter($value); // Call the setter method dynamically
+            }
+        }
     }
 
     public function getId(): ?int
@@ -164,33 +175,33 @@ class Contact
         return $this;
     }
 
-    /**
-     * @return Collection<int, Phone>
-     */
-    public function getPhones(): Collection
-    {
-        return $this->phones;
-    }
+    // /**
+    //  * @return Collection<int, Phone>
+    //  */
+    // public function getPhones(): Collection
+    // {
+    //     return $this->phones;
+    // }
 
-    public function addPhone(Phone $phone): self
-    {
-        if (!$this->phones->contains($phone)) {
-            $this->phones[] = $phone;
-            $phone->setContact($this);
-        }
+    // public function addPhone(Phone $phone): self
+    // {
+    //     if (!$this->phones->contains($phone)) {
+    //         $this->phones[] = $phone;
+    //         $phone->setContact($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removePhone(Phone $phone): self
-    {
-        if ($this->phones->removeElement($phone)) {
-            // set the owning side to null (unless already changed)
-            if ($phone->getContact() === $this) {
-                $phone->setContact(null);
-            }
-        }
+    // public function removePhone(Phone $phone): self
+    // {
+    //     if ($this->phones->removeElement($phone)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($phone->getContact() === $this) {
+    //             $phone->setContact(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }

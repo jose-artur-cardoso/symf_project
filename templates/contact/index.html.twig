@@ -5,25 +5,22 @@
 {% block body %}
 
 <h1 class="text-body-emphasis">All contacts</h1>
+<form action="{{ path('app_contact_delete') }}" method="POST">
 
-
-{# Display errors for a specific field #}
-{# {% if form_errors(form.email) %}
-    <div class="alert alert-danger">
-        <strong>Error for {{ form.email.vars.label }}:</strong>
-        {{ form_errors(form.email) }}
-    </div>
-{% endif %} #}
-
-
-<div class="d-flex mb-3">
-  <div class="p-2">Select all</div>
+<div class="d-flex align-items-center mb-3">
+  <div class="p-2"><input type="checkbox" id="select_all_contacts"> Select all</div>
+  <div class="p-2">
+    <button id="deleteButton" type="submit" class="btn btn-primary d-none" data-toggle="modal" data-target="#confirm-delete">
+    Delete Selected
+    </button>
+  </div>
   <div class="ms-auto p-2">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
     New contact
     </button>
   </div>
 </div>
+
 <table class="table table-striped">
   <thead>
     <tr class="table-primary">
@@ -37,11 +34,8 @@
   <tbody>
     {% for contact in contacts %}
     <tr>
-      <td class="checkRow">
-      
-      
-      {# {{ form_row(delForm.test) }} #}
-      <input type="checkbox" value="{{ contact.id }}">
+      <td class="checkRow">    
+      <input type="checkbox" name="selected_contacts[]" value="{{ contact.id }}">
       </td>
       <td>{{ contact.name }}</td>
       <td>{{ contact.email }}</td>
@@ -58,6 +52,8 @@
   </tbody>
 </table>
 
+</form>
+
 <!-- Modal -->
 <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -70,12 +66,9 @@
       <div class="modal-body">
       {{ form_errors(form) }}
 
-
-
-      {{ form_start(form) }}        
+        {{ form_start(form) }}        
         {{ form_row(form.name) }}
         {{ form_row(form.email) }}
-
         
         <div id="contact_phones" data-prototype="{{ form_widget(form.phone_list.vars.prototype)|e('html_attr') }}">
             {% for phoneListForm in form.phone_list %}
@@ -95,12 +88,16 @@
   </div>
 </div>
 
+
+
 {% endblock %}
 
 
 {% block bottom_javascripts %}
     {{ parent() }}
     <script>
+
+        // Add new phone
         document.getElementById('add_phone').addEventListener('click', addPhone);
 
         function addPhone() {
@@ -115,39 +112,49 @@
             collectionHolder.appendChild(newLi);
         }
 
+        // Modal Show
         $(document).ready(function() {
             {% if openModal is defined %}
                 $('#formModal').modal('show');
             {% endif %}
         });
 
+        // Birthday tooltip
         $(function () {
           $('[data-toggle="tooltip"]').tooltip()
         })
-        {# $(document).ready(function () {
-            $('#submitBtn').on('click', function () {
-                var form = $('.ajax-form');
-                $.ajax({
-                    url: form.attr('/contact/create'),
-                    method: form.attr('method'),
-                    data: form.serialize(),
-                    success: function (response) {
-                        if (response.errors) {
-                            // Update modal content with errors
-                            // Example: display errors next to form fields
-                            $.each(response.errors, function (field, messages) {
-                                form.find('[name="' + field + '"]').after('<span class="text-danger">' + messages.join(', ') + '</span>');
-                            });
-                        } else {
-                            // Close the modal or perform other actions on successful form submission
-                            $('#yourModal').modal('hide');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(xhr.responseText);
+
+        // Select all checkbox
+        document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('select_all_contacts');
+
+          selectAllCheckbox.addEventListener('change', function() {
+              const contactCheckboxes = document.querySelectorAll('input[type="checkbox"][name="selected_contacts[]"]');
+
+              contactCheckboxes.forEach(function(checkbox) {
+                  checkbox.checked = selectAllCheckbox.checked;
+                  });
+          });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[name="selected_contacts[]"]');
+            const deleteButton = document.getElementById('deleteButton');
+
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    // Check if any of the checkboxes are checked
+                    const anyChecked = [...checkboxes].some(checkbox => checkbox.checked);
+                    
+                    if (anyChecked) {
+                        deleteButton.classList.remove('d-none');
+                    } else {
+                        deleteButton.classList.add('d-none');
                     }
                 });
             });
-        }); #}
+        });
+
+
       </script>
 {% endblock %}
