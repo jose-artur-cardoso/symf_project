@@ -3,9 +3,9 @@ memory: 2048
 cpus: 2
 provider: virtualbox
 SpeakFriendAndEnter: true
-authorize: ~/.ssh/id_rsa.pub
-keys:
-    - ~/.ssh/id_rsa
+# authorize: ~/.ssh/id_rsa.pub
+# keys:
+#     - ~/.ssh/id_rsa
 folders:
     -
         map: ~/Documents/projects/symf_project
