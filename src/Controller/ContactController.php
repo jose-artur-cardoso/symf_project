@@ -23,7 +23,7 @@ class ContactController extends AbstractController
         $this->contactRepository = $contactRepository;
     }
     /**
-     * @Route("/contact", name="app_contact")
+     * @Route("/", name="app_contact")
      */
     public function index(): Response
     {
