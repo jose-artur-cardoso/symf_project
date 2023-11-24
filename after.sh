@@ -28,17 +28,9 @@ DB_NAME="homestead"
 DB_USER="homestead"
 DB_PASS="secret"
 
-# Symfony commands for database setup
-cd symf_project
-echo "Running Symfony commands for database setup..."
-php bin/console doctrine:database:create --if-not-exists
-php bin/console doctrine:schema:update --force
-php bin/console doctrine:fixtures:load --no-interaction
-echo "Symfony commands executed successfully."
-
 # Run composer install
 echo "Running composer install..."
-composer install
+composer install --ignore-platform-req=php
 echo "Composer install completed successfully."
 
 # Run npm install
@@ -50,3 +42,11 @@ echo "npm install completed successfully."
 echo "Running npm build..."
 npm run build
 echo "npm run build completed successfully."
+
+# Symfony commands for database setup
+cd symf_project
+echo "Running Symfony commands for database setup..."
+php bin/console doctrine:database:create --if-not-exists
+php bin/console doctrine:schema:update --force
+php bin/console doctrine:fixtures:load --no-interaction
+echo "Symfony commands executed successfully."

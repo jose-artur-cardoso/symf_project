@@ -6,6 +6,8 @@ SpeakFriendAndEnter: true
 # authorize: ~/.ssh/id_rsa.pub
 # keys:
 #     - ~/.ssh/id_rsa
+box: laravel/homestead
+box_version: "7.4"
 folders:
     -
         map: ~/Documents/projects/symf_project
