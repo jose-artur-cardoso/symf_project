@@ -151,6 +151,7 @@ class Contact
     public function daysToBirthday(): int
     {
         $today = new \DateTime();
+        $today->setTime(0,0,0);
         
         $birthday = $this->getBirthday();
 
@@ -163,7 +164,6 @@ class Contact
         {
             $birthdayOnCurrentYear->modify('+1 year');
         }
-        
         $timeToBirthday = $today->diff($birthdayOnCurrentYear);
         return $timeToBirthday->days;
     }

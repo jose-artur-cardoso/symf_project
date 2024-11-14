@@ -45,8 +45,14 @@
       {% endfor %}
       </td>
       <td>
-      
-      {{ contact.birthday|date('d/m/Y') }} {% if contact.daysToBirthday <= 5 %} <i class="bi bi-bell" data-toggle="tooltip" data-placement="top" title="{{contact.daysToBirthday}} days to birthday"></i> {% endif %}</td>
+        {{ contact.birthday|date('d/m/Y') }} 
+        {% if contact.daysToBirthday >= 1 and contact.daysToBirthday <= 5 %}
+        <i class="bi bi-bell" data-toggle="tooltip" data-placement="top" title="{{contact.daysToBirthday}} days to birthday"></i>
+        {% endif %}
+        {% if contact.daysToBirthday == 0 %}
+        <i class="bi bi-cake2 color-red" data-toggle="tooltip" data-placement="top" title="Today is the {{contact.name}} birthday"></i>
+        {% endif %}
+      </td>
     </tr>
     {% endfor %}
   </tbody>
