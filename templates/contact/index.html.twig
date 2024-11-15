@@ -40,9 +40,15 @@
       <td>{{ contact.name }}</td>
       <td>{{ contact.email }}</td>
       <td>
-      {% for phone in contact.phoneList %}
-      {{ phone|french_phone_format }}
-      {% endfor %}
+          {% if contact.phones is not empty %}
+          <ul>
+              {% for phone in contact.phones %}
+                  <li>{{ phone.number|french_phone_format }}</li>
+              {% endfor %}
+          </ul>
+          {% else %}
+              <span>No phones</span>
+          {% endif %}
       </td>
       <td>
         {{ contact.birthday|date('d/m/Y') }} 
@@ -76,11 +82,18 @@
         {{ form_row(form.name) }}
         {{ form_row(form.email) }}
         
-        
-        <div id="contact_phones" data-prototype="{{ form_widget(form.phone_list.vars.prototype)|e('html_attr') }}">          
-            {{ form_row(form.phone_list) }}
-        </div>
-        <a href="#" id="add_phone"><i class="bi bi-plus-circle-fill"></i> Add a phone</a>
+        {# Render the collection field #}
+{# <div id="phones-collection" data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}" data-index="{{ form.phones|length }}">
+    {{ form_widget(form.phones) }}
+</div> #}
+
+
+<ul class="phones"
+    data-index="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"
+    data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}"
+>
+</ul>
+{{ form_errors(form.phones) }}
 
       {{ form_end(form) }}  
       
@@ -98,10 +111,46 @@
     {{ parent() }}
     <script>
 
-        // Add new phone
-        document.getElementById('add_phone').addEventListener('click', addPhone);
 
-        function addPhone() {
+const addPhoneLink = document.createElement('a')
+addPhoneLink.classList.add('add_phone_list')
+addPhoneLink.href='#'
+addPhoneLink.innerText='Add a phone'
+addPhoneLink.dataset.collectionHolderClass='phones'
+
+const newLinkLi = document.createElement('li').append(addPhoneLink)
+
+const collectionHolder = document.querySelector('ul.phones')
+collectionHolder.appendChild(addPhoneLink)
+
+const addFormToCollection = (e) => {
+	const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+      const item = document.createElement('li');
+
+      item.innerHTML = collectionHolder
+        .dataset
+        .prototype
+        .replace(
+          /__name__/g,
+          collectionHolder.dataset.index
+        );
+
+      collectionHolder.appendChild(item);
+
+      collectionHolder.dataset.index++;
+}
+
+addPhoneLink.addEventListener("click", addFormToCollection)
+
+
+
+
+
+        // Add new phone
+        {# document.getElementById('add_phone').addEventListener('click', addPhone); #}
+
+        {# function addPhone() {
             var collectionHolder = document.getElementById('contact_phones');
             var prototype = collectionHolder.getAttribute('data-prototype');
             var index = collectionHolder.children.length;
@@ -111,7 +160,7 @@
             newLi.innerHTML = newForm;
 
             collectionHolder.appendChild(newLi);
-        }
+        } #}
 
         // Modal Show
         $(document).ready(function() {

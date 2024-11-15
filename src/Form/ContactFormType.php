@@ -20,13 +20,15 @@ class ContactFormType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('email', EmailType::class)
-            ->add('phone_list', CollectionType::class, [
+            ->add('phones', CollectionType::class, [
                 'label' => 'Phones',
                 'entry_type' => PhoneType::class, // Use PhoneType for phone_list
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'prototype' => true,
                 'delete_empty' => true,
+                'data_class' => null
             ])
             ->add('birthday', DateType::class, [
                 'format' => 'dd MMM yyyy',
