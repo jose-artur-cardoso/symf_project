@@ -1,0 +1,103 @@
+<form action="{{ path('app_contact_delete') }}" method="POST">
+  <table class="table table-striped">
+    <thead>
+      <tr class="table-primary">
+        <th></th>
+        <th scope="col">Name</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Phone numbers</th>
+        <th scope="col">Birthday</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contact in contacts %}
+      <tr>
+        <td class="checkRow">    
+        <input type="checkbox" name="selected_contacts[]" value="{{ contact.id }}">
+        </td>
+        <td>{{ contact.name }}</td>
+        <td>{{ contact.email }}</td>
+        <td>
+            {% if contact.phones is not empty %}
+            <ul>
+                {% for phone in contact.phones %}
+                    <li>{{ phone.number|french_phone_format }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <span>No phones</span>
+            {% endif %}
+        </td>
+        <td>
+          {{ contact.birthday|date('d/m/Y') }} 
+          {% if contact.daysToBirthday >= 1 and contact.daysToBirthday <= 5 %}
+          <i class="bi bi-bell" data-toggle="tooltip" data-placement="top" title="{{contact.daysToBirthday}} days to birthday"></i>
+          {% endif %}
+          {% if contact.daysToBirthday == 0 %}
+          <i class="bi bi-cake2 color-red" data-toggle="tooltip" data-placement="top" title="Today is the {{contact.name}} birthday"></i>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
+
+<script>
+
+        // Modal Show
+        $(document).ready(function() {
+            {% if openModal is defined %}
+                $('#formModal').modal('show');
+            {% endif %}
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+          const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+          const form = document.querySelector('form[action="{{ path('app_contact_delete') }}"]');
+
+          confirmDeleteButton.addEventListener('click', function () {
+            form.submit();
+          });
+        });
+
+        // Birthday tooltip
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        // Select all checkbox
+        document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('select_all_contacts');
+
+          selectAllCheckbox.addEventListener('change', function() {
+              const contactCheckboxes = document.querySelectorAll('input[type="checkbox"][name="selected_contacts[]"]');
+
+              contactCheckboxes.forEach(function(checkbox) {
+                  checkbox.checked = selectAllCheckbox.checked;
+                  console.log("1");
+                  });
+          });
+
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          const deleteButton = document.getElementById('deleteButton');
+
+          checkboxes.forEach(function(checkbox) {
+              checkbox.addEventListener('change', function() {
+                  // Check if any of the checkboxes are checked
+                  const anyChecked = [...checkboxes].some(checkbox => checkbox.checked);
+                  
+                  if (anyChecked) {
+                    console.log("2");
+                      deleteButton.classList.remove('d-none');
+                  } else {
+                    console.log("3");
+                      deleteButton.classList.add('d-none');
+                  }
+              });
+          });
+
+        });
+
+</script>

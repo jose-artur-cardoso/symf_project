@@ -4,70 +4,51 @@
 
 {% block body %}
 
+<div 
+  class="container-fluid mt-4"
+  {{ stimulus_controller('reload-content', {
+    url: path('app_contact', { ajax:1 })
+  }) }}
+  data-action="modal-form:success->reload-content#refreshContent"
+>
 <h1 class="text-body-emphasis">All contacts</h1>
-<form action="{{ path('app_contact_delete') }}" method="POST">
 
 <div class="d-flex align-items-center mb-3">
   <div class="p-2"><input type="checkbox" id="select_all_contacts"> Select all</div>
-  <div class="p-2">
-    <button id="deleteButton" type="submit" class="btn btn-primary d-none" data-toggle="modal" data-target="#confirm-delete">
+    <button id="deleteButton" type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
     Delete Selected
-    </button>
+  </button>
+  <div class="p-2">
+
   </div>
   <div class="ms-auto p-2">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
+
+
+    <div {{ stimulus_controller('modal-form', {
+        formUrl: path('app_contact_create')
+    }) }}>
+        <button
+            data-action="modal-form#openModal"
+            class="btn btn-primary btn-sm"
+        >Add+</button>
+    {{ include('_modal.html.twig', {
+        modalTitle: 'Add a new contact'
+    }) }}
+    </div>
+
+    {# <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
     New contact
-    </button>
+    </button> #}
   </div>
 </div>
 
-<table class="table table-striped">
-  <thead>
-    <tr class="table-primary">
-      <th></th>
-      <th scope="col">Name</th>
-      <th scope="col">E-mail</th>
-      <th scope="col">Phone numbers</th>
-      <th scope="col">Birthday</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for contact in contacts %}
-    <tr>
-      <td class="checkRow">    
-      <input type="checkbox" name="selected_contacts[]" value="{{ contact.id }}">
-      </td>
-      <td>{{ contact.name }}</td>
-      <td>{{ contact.email }}</td>
-      <td>
-          {% if contact.phones is not empty %}
-          <ul>
-              {% for phone in contact.phones %}
-                  <li>{{ phone.number|french_phone_format }}</li>
-              {% endfor %}
-          </ul>
-          {% else %}
-              <span>No phones</span>
-          {% endif %}
-      </td>
-      <td>
-        {{ contact.birthday|date('d/m/Y') }} 
-        {% if contact.daysToBirthday >= 1 and contact.daysToBirthday <= 5 %}
-        <i class="bi bi-bell" data-toggle="tooltip" data-placement="top" title="{{contact.daysToBirthday}} days to birthday"></i>
-        {% endif %}
-        {% if contact.daysToBirthday == 0 %}
-        <i class="bi bi-cake2 color-red" data-toggle="tooltip" data-placement="top" title="Today is the {{contact.name}} birthday"></i>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div data-reload-content-target="content">
+  {{ include('contact/_list.html.twig')}}
+</div>
 
-</form>
-
+</div>
 <!-- Modal -->
-<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+{# <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -78,16 +59,10 @@
       <div class="modal-body">
       {{ form_errors(form) }}
 
-        {{ form_start(form) }}        
+        {{ form_start(form) }}       
         {{ form_row(form.name) }}
         {{ form_row(form.email) }}
         
-        {# Render the collection field #}
-{# <div id="phones-collection" data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}" data-index="{{ form.phones|length }}">
-    {{ form_widget(form.phones) }}
-</div> #}
-
-
 <ul class="phones"
     data-index="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"
     data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}"
@@ -95,8 +70,32 @@
 </ul>
 {{ form_errors(form.phones) }}
 
+        {{ form_row(form.birthday) }} 
+
       {{ form_end(form) }}  
       
+      </div>
+    </div>
+  </div>
+</div>
+ #}
+
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete the selected contacts? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
       </div>
     </div>
   </div>
@@ -109,108 +108,5 @@
 
 {% block bottom_javascripts %}
     {{ parent() }}
-    <script>
-
-
-const addPhoneLink = document.createElement('a')
-addPhoneLink.classList.add('add_phone_list')
-addPhoneLink.href='#'
-addPhoneLink.innerText='Add a phone'
-addPhoneLink.dataset.collectionHolderClass='phones'
-
-const newLinkLi = document.createElement('li').append(addPhoneLink)
-
-const collectionHolder = document.querySelector('ul.phones')
-collectionHolder.appendChild(addPhoneLink)
-
-const addFormToCollection = (e) => {
-	const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
-
-      const item = document.createElement('li');
-
-      item.innerHTML = collectionHolder
-        .dataset
-        .prototype
-        .replace(
-          /__name__/g,
-          collectionHolder.dataset.index
-        );
-
-      collectionHolder.appendChild(item);
-
-      collectionHolder.dataset.index++;
-}
-
-addPhoneLink.addEventListener("click", addFormToCollection)
-
-
-
-
-
-        // Add new phone
-        {# document.getElementById('add_phone').addEventListener('click', addPhone); #}
-
-        {# function addPhone() {
-            var collectionHolder = document.getElementById('contact_phones');
-            var prototype = collectionHolder.getAttribute('data-prototype');
-            var index = collectionHolder.children.length;
-
-            var newForm = prototype.replace(/__name__/g, index);
-            var newLi = document.createElement('div');
-            newLi.innerHTML = newForm;
-
-            collectionHolder.appendChild(newLi);
-        } #}
-
-        // Modal Show
-        $(document).ready(function() {
-            {% if openModal is defined %}
-                $('#formModal').modal('show');
-            {% endif %}
-        });
-
-        // Birthday tooltip
-        $(function () {
-          $('[data-toggle="tooltip"]').tooltip()
-        })
-
-        // Select all checkbox
-        document.addEventListener('DOMContentLoaded', function() {
-        const selectAllCheckbox = document.getElementById('select_all_contacts');
-
-          selectAllCheckbox.addEventListener('change', function() {
-              const contactCheckboxes = document.querySelectorAll('input[type="checkbox"][name="selected_contacts[]"]');
-
-              contactCheckboxes.forEach(function(checkbox) {
-                  checkbox.checked = selectAllCheckbox.checked;
-                  console.log("1");
-                  });
-          });
-
-          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-          const deleteButton = document.getElementById('deleteButton');
-
-          checkboxes.forEach(function(checkbox) {
-              checkbox.addEventListener('change', function() {
-                  // Check if any of the checkboxes are checked
-                  const anyChecked = [...checkboxes].some(checkbox => checkbox.checked);
-                  
-                  if (anyChecked) {
-                    console.log("2");
-                      deleteButton.classList.remove('d-none');
-                  } else {
-                    console.log("3");
-                      deleteButton.classList.add('d-none');
-                  }
-              });
-          });
-
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-
-        });
-
-
-      </script>
+    
 {% endblock %}

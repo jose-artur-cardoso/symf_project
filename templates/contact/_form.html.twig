@@ -1,0 +1,77 @@
+{# {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }} #}
+
+
+        {{ form_start(form) }}       
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+        
+<div {{ stimulus_controller('form-collection') }}
+    data-form-collection-index-value="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"
+    data-form-collection-prototype-value="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}"
+>
+{{ form_label(form.phones) }}
+        <ul class="phones" {{ stimulus_target('form-collection', 'collectionContainer') }}>
+        {# Render existing phone inputs #}
+        {% for phone in form.phones %}
+            <li>{{ form_row(phone) }}
+            {# <button type="button" data-action="form-collection#removeCollectionElement">Remove</button> #}
+            </li>
+        {% endfor %}
+    </ul>
+    <button type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}><i class="bi bi-plus-circle fs-4"></i></button>
+    
+</div>
+
+{# <ul class="phones"
+    data-index="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"
+    data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}"
+>
+</ul> #}
+
+        {{ form_row(form.birthday) }} 
+    
+      {{ form_end(form) }}  
+      
+
+
+<script>
+/*
+        const addPhoneLink = document.createElement('a')
+        addPhoneLink.classList.add('add_phone_list')
+        addPhoneLink.href='#'
+        addPhoneLink.innerHTML='<i class="bi bi-plus-circle form-icon"></i>'
+        addPhoneLink.dataset.collectionHolderClass='phones'
+
+        const newLinkLi = document.createElement('li').append(addPhoneLink)
+
+        const collectionHolder = document.querySelector('ul.phones')
+        {# collectionHolder.appendChild(addPhoneLink) #}
+
+        const addFormToCollection = (e) => {
+            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+            const item = document.createElement('li');
+
+            item.innerHTML = collectionHolder
+                .dataset
+                .prototype
+                .replace(
+                /__name__/g,
+                collectionHolder.dataset.index
+                );
+
+            collectionHolder.appendChild(item);
+
+            collectionHolder.dataset.index++;
+
+            const newLastItem = collectionHolder.querySelector('li:last-child');
+            newLastItem.appendChild(addPhoneLink);
+        }
+
+        addFormToCollection({ currentTarget: { dataset: { collectionHolderClass: 'phones' } } });
+        addPhoneLink.addEventListener("click", addFormToCollection)
+        */
+</script>

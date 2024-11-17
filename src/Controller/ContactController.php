@@ -11,80 +11,126 @@ use App\Entity\Contact;
 use App\Form\ContactFormType;
 use App\Form\ContactCheckType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Phone;
 
 
 class ContactController extends AbstractController
 {
 
-    private $contactRepository;
+    // private $contactRepository;
 
-    public function __construct(ContactRepository $contactRepository)
-    {
-        $this->contactRepository = $contactRepository;
-    }
+    // public function __construct(ContactRepository $contactRepository)
+    // {
+    //     $this->contactRepository = $contactRepository;
+    // }
+
     /**
-     * @Route("/", name="app_contact")
+     * @Route("/", name="app_contact", methods={"GET"})
      */
-    public function index(): Response
+    public function index(ContactRepository $contactRepository, Request $request): Response
+    {
+
+        $template = $request->query->get('ajax') ? '_list.html.twig' : 'index.html.twig';
+        return $this->render('contact/'. $template, [
+            'contacts' => $contactRepository->findAll(),
+        ]);
+    }
+    // /**
+    //  * @Route("/", name="app_contact")
+    //  */
+    // public function index(): Response
+    // {
+        
+    //     $contacts = $this->contactRepository->findAll();
+        
+    //     $contact = new Contact();
+    //     $form = $this->createForm(ContactFormType::class, $contact, [
+    //         'action' => $this->generateUrl('app_contact_create'),
+    //         'method' => 'POST',
+    //     ]);
+
+    //     $formCheckBox = $this->createForm(ContactCheckType::class, null, [
+    //         'action' => $this->generateUrl('app_contact_delete'),
+    //         'method' => 'POST',
+    //     ]);
+        
+    //     return $this->render('contact/index.html.twig', [
+    //         'contacts' => $contacts,
+    //         'form' => $form->createView(),
+    //         'formCheckBox' => $formCheckBox->createView(),
+    //         // 'delForm' => $delForm->createView(),
+    //     ]);
+    // }
+
+
+
+    /**
+     * @Route("contact/new", name="app_contact_create", methods={"GET", "POST"})
+     */
+    public function new(Request $request, ContactRepository $contactRepository): Response
     {
         
-        $contacts = $this->contactRepository->findAll();
-
         $contact = new Contact();
-        $form = $this->createForm(ContactFormType::class, $contact, [
-            'action' => $this->generateUrl('app_contact_create'),
-            'method' => 'POST',
-        ]);
-
-        $formCheckBox = $this->createForm(ContactCheckType::class, null, [
-            'action' => $this->generateUrl('app_contact_delete'),
-            'method' => 'POST',
-        ]);
-
-        return $this->render('contact/index.html.twig', [
-            'contacts' => $contacts,
-            'form' => $form->createView(),
-            'formCheckBox' => $formCheckBox->createView(),
-            // 'delForm' => $delForm->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/contact/create", name="app_contact_create")
-     */
-    public function createContact(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        try{
-            $openModal = false;
-            $contact = new Contact();
-            $form = $this->createForm(ContactFormType::class, $contact);
-            $form->handleRequest($request);
-    
-            if ($form->isSubmitted() && $form->isValid()) {
-                
-                $contact = $form->getData();
-                $entityManager->persist($contact);
-                $entityManager->flush();
-    
-                flash()->addSuccess('The contact was inserted with success.');
-                return $this->redirectToRoute('app_contact');
-    
-            }
-        }
-        catch(\Exception $e){
-            flash()->addError('There was an error.'); 
-            $openModal = true;
-        }
+        $form = $this->createForm(ContactFormType::class, $contact);
+        $form->handleRequest($request);
         
-        $contacts = $this->contactRepository->findAll();
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            foreach ($contact->getPhones() as $phone) {
+                $phone->setContact($contact); // Ensure the relationship is set
+            }
 
-        return $this->render('contact/index.html.twig', [
-            'contacts' => $contacts,
-            'form' => $form->createView(),
-            'openModal' => $openModal,
+            $contactRepository->add($contact, true);
+
+            return $this->redirectToRoute('app_contact', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $template = $request->isXmlHttpRequest() ? '_form.html.twig' : '_form.html.twig';
+
+        return $this->renderForm('contact/'. $template, [
+            'contact' => $contact,
+            'form' => $form,
         ]);
-
     }
+
+
+
+    // /**
+    //  * @Route("/contact/create", name="app_contact_create")
+    //  */
+    // public function createContact(Request $request, EntityManagerInterface $entityManager): Response
+    // {
+    //     try{
+    //         $openModal = false;
+    //         $contact = new Contact();
+    //         $form = $this->createForm(ContactFormType::class, $contact);
+    //         $form->handleRequest($request);
+    
+    //         if ($form->isSubmitted() && $form->isValid()) {
+                
+    //             $contact = $form->getData();
+    //             $entityManager->persist($contact);
+    //             $entityManager->flush();
+    
+    //             flash()->addSuccess('The contact was inserted with success.');
+    //             return $this->redirectToRoute('app_contact');
+    
+    //         }
+    //     }
+    //     catch(\Exception $e){
+    //         flash()->addError('There was an error.'); 
+    //         $openModal = true;
+    //     }
+        
+    //     $contacts = $this->contactRepository->findAll();
+
+    //     return $this->render('contact/index.html.twig', [
+    //         'contacts' => $contacts,
+    //         'form' => $form->createView(),
+    //         'openModal' => $openModal,
+    //     ]);
+
+    // }
 
     /**
     * @Route("/contact/delete", name="app_contact_delete")

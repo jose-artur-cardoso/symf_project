@@ -10,3 +10,37 @@ body {
 main .container {
     padding: 60px 15px 0;
 }
+
+ul.phones {
+  padding-left:unset;
+  display: flex;
+  flex-direction: column;
+}
+
+ul.phones li {
+  display: flex;
+  align-items: center;
+  list-style-type:none;
+  position: relative;
+}
+
+ul.phones li input {
+  flex: 1;
+  margin-right: 0.5em;
+}
+
+ul.phones li button {
+  margin-left:auto;
+}
+
+.add_phone {
+  margin-left: auto; /* This will push the button to the right */
+}
+
+.form-icon {
+  font-size:2rem;
+}
+
+.modal-body button[type="submit"] {
+  display: none;
+}

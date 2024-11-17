@@ -64,24 +64,12 @@ class Contact
      * @Groups("contacts_read")
      */
     private $birthday;
-
-    // /**
-    //  * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="contact", cascade={"persist"}, orphanRemoval=true)
-    //  * @Groups("contacts_read")
-    //  */
-    // private $phones;    
-    
-
+   
     /**
-     * @ORM\Column(type="array")
-     * @Groups("contacts_read")
+     * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="Contact", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @Assert\Valid()
      */
-    private $phoneList;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="Contact", orphanRemoval=true)
-     */
-    private $phones;
+    private Collection $phones;
 
     public function __construct()
     {

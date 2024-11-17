@@ -19,8 +19,9 @@ class Phone
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=15)
+     * @ORM\Column(type="string", length=10)
      * @Assert\Type(type="string", message="The phone number must be a string.")
+     * @Assert\Regex("/^\d{10}$/", message="Phone number should be a 10-digit number.")
      */
     private $number;
 
@@ -58,4 +59,5 @@ class Phone
 
         return $this;
     }
+
 }

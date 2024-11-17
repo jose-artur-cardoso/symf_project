@@ -21,8 +21,9 @@ class ContactFormType extends AbstractType
             ->add('name', TextType::class)
             ->add('email', EmailType::class)
             ->add('phones', CollectionType::class, [
-                'label' => 'Phones',
+                'label' => false,
                 'entry_type' => PhoneType::class, // Use PhoneType for phone_list
+                'entry_options' => ['label' => false], // Disable the label for individual entries
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
