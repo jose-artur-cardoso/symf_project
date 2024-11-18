@@ -17,13 +17,6 @@ use App\Entity\Phone;
 class ContactController extends AbstractController
 {
 
-    // private $contactRepository;
-
-    // public function __construct(ContactRepository $contactRepository)
-    // {
-    //     $this->contactRepository = $contactRepository;
-    // }
-
     /**
      * @Route("/", name="app_contact", methods={"GET"})
      */
@@ -35,35 +28,7 @@ class ContactController extends AbstractController
             'contacts' => $contactRepository->findAll(),
         ]);
     }
-    // /**
-    //  * @Route("/", name="app_contact")
-    //  */
-    // public function index(): Response
-    // {
-        
-    //     $contacts = $this->contactRepository->findAll();
-        
-    //     $contact = new Contact();
-    //     $form = $this->createForm(ContactFormType::class, $contact, [
-    //         'action' => $this->generateUrl('app_contact_create'),
-    //         'method' => 'POST',
-    //     ]);
-
-    //     $formCheckBox = $this->createForm(ContactCheckType::class, null, [
-    //         'action' => $this->generateUrl('app_contact_delete'),
-    //         'method' => 'POST',
-    //     ]);
-        
-    //     return $this->render('contact/index.html.twig', [
-    //         'contacts' => $contacts,
-    //         'form' => $form->createView(),
-    //         'formCheckBox' => $formCheckBox->createView(),
-    //         // 'delForm' => $delForm->createView(),
-    //     ]);
-    // }
-
-
-
+   
     /**
      * @Route("contact/new", name="app_contact_create", methods={"GET", "POST"})
      */
@@ -76,10 +41,6 @@ class ContactController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
             
-            // foreach ($contact->getPhones() as $phone) {
-            //     $phone->setContact($contact); // Ensure the relationship is set
-            // }
-
             $contactRepository->add($contact, true);
 
             return $this->redirectToRoute('app_contact', [], Response::HTTP_SEE_OTHER);
@@ -92,45 +53,6 @@ class ContactController extends AbstractController
             'form' => $form,
         ]);
     }
-
-
-
-    // /**
-    //  * @Route("/contact/create", name="app_contact_create")
-    //  */
-    // public function createContact(Request $request, EntityManagerInterface $entityManager): Response
-    // {
-    //     try{
-    //         $openModal = false;
-    //         $contact = new Contact();
-    //         $form = $this->createForm(ContactFormType::class, $contact);
-    //         $form->handleRequest($request);
-    
-    //         if ($form->isSubmitted() && $form->isValid()) {
-                
-    //             $contact = $form->getData();
-    //             $entityManager->persist($contact);
-    //             $entityManager->flush();
-    
-    //             flash()->addSuccess('The contact was inserted with success.');
-    //             return $this->redirectToRoute('app_contact');
-    
-    //         }
-    //     }
-    //     catch(\Exception $e){
-    //         flash()->addError('There was an error.'); 
-    //         $openModal = true;
-    //     }
-        
-    //     $contacts = $this->contactRepository->findAll();
-
-    //     return $this->render('contact/index.html.twig', [
-    //         'contacts' => $contacts,
-    //         'form' => $form->createView(),
-    //         'openModal' => $openModal,
-    //     ]);
-
-    // }
 
     /**
     * @Route("/contact/delete", name="app_contact_delete")

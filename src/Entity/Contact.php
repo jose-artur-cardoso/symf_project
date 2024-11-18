@@ -58,17 +58,6 @@ class Contact
      */
     private $phones;
 
-    // /**
-    //  * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="Contact", cascade={"persist", "remove"}, orphanRemoval=true)
-    //  * @Assert\Valid()
-    //  */
-    // private Collection $phones;
-
-    // public function __construct()
-    // {
-    //     $this->phones = new ArrayCollection();
-    // }
-
     public function setValues(array $values): void
     {
         foreach ($values as $key => $value) {
