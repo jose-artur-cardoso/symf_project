@@ -51,3 +51,14 @@ php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:schema:update --force
 php bin/console doctrine:fixtures:load --no-interaction
 echo "Symfony commands executed successfully."
+
+# Change CLI version to 7.4
+
+php74
+
+
+# Create log folder
+
+cd /var/log
+sudo mkdir dev
+sudo chmod 777 dev
