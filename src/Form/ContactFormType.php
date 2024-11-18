@@ -32,9 +32,6 @@ class ContactFormType extends AbstractType
                         new NotBlank([
                             'message' => 'Phone number cannot be empty.',
                         ]),
-                        new NotNull([
-                            'message' => 'Phone number cannot be null.',
-                        ]),
                         new Regex([
                             'pattern' => '/^\d{10}$/',  // 10 digits without any other characters (no "+" sign or spaces)
                             'message' => 'Please enter a valid phone number with exactly 10 digits.'
@@ -45,6 +42,7 @@ class ContactFormType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'prototype' => true,
+                'prototype_name' => '__name__',
                 'delete_empty' => false,
                 'data_class' => null
             ])
@@ -60,6 +58,7 @@ class ContactFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Contact::class,
+            'allow_extra_fields' => false,
         ]);
     }
 }

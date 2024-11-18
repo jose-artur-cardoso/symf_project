@@ -13,28 +13,14 @@ main .container {
 
 ul.phones {
   padding-left:unset;
-  display: flex;
-  flex-direction: column;
+}
+
+ul li {
+  list-style-type:none;
 }
 
 ul.phones li {
-  display: flex;
-  align-items: center;
-  list-style-type:none;
-  position: relative;
-}
-
-ul.phones li input {
-  flex: 1;
-  margin-right: 0.5em;
-}
-
-ul.phones li button {
-  margin-left:auto;
-}
-
-.add_phone {
-  margin-left: auto; /* This will push the button to the right */
+  margin-bottom:0.5rem;
 }
 
 .form-icon {

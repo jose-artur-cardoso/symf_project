@@ -17,8 +17,11 @@
         {{ modalContent|default('Loading...') }}
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-action="modal-form#closeForm">
+        Cancel
+        </button>
         <button type="button" class="btn btn-primary" data-action="modal-form#submitForm">
-        Save
+        Create
         </button>
       </div>
     </div>

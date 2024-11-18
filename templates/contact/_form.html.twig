@@ -8,22 +8,37 @@
         {{ form_row(form.name) }}
         {{ form_row(form.email) }}
         
+
 <div {{ stimulus_controller('form-collection') }}
     data-form-collection-index-value="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"
     data-form-collection-prototype-value="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}"
 >
-{{ form_label(form.phones) }}
+ 
+ <label for="contact_form_phones" class="form-label required">Phone numbers</label>
+    <ul class="phones" {{ stimulus_target('form-collection', 'collectionContainer') }}>
+            {% for phone in form.phones %}
+            <li>{{ form_row(phone) }}</li>
+        {% endfor %}
+    </ul>
+    <button class="btn btn-primary" type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}><i class="bi bi-plus-circle"></i> Add another</button>
+</div>
+
+{# <div {{ stimulus_controller('form-collection') }}
+    data-form-collection-index-value="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"
+    data-form-collection-prototype-value="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}"
+>
+        {{ form_label(form.phones) }}
         <ul class="phones" {{ stimulus_target('form-collection', 'collectionContainer') }}>
-        {# Render existing phone inputs #}
+        
         {% for phone in form.phones %}
-            <li>{{ form_row(phone) }}
-            {# <button type="button" data-action="form-collection#removeCollectionElement">Remove</button> #}
+            <li>{{ form_row(phone, {label: false}) }}
+            
             </li>
         {% endfor %}
     </ul>
-    <button type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}><i class="bi bi-plus-circle fs-4"></i></button>
+    <button class="btn btn-primary" type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}><i class="bi bi-plus-circle"></i> Add another</button>
     
-</div>
+</div> #}
 
 {# <ul class="phones"
     data-index="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"

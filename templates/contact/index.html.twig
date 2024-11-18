@@ -11,7 +11,7 @@
   }) }}
   data-action="modal-form:success->reload-content#refreshContent"
 >
-<h1 class="text-body-emphasis">All contacts</h1>
+<h1 class="text-body-emphasis">Contact book</h1>
 
 <div class="d-flex align-items-center mb-3">
   <div class="p-2"><input type="checkbox" id="select_all_contacts"> Select all</div>
@@ -30,7 +30,7 @@
         <button
             data-action="modal-form#openModal"
             class="btn btn-primary btn-sm"
-        >Add+</button>
+        >New contact</button>
     {{ include('_modal.html.twig', {
         modalTitle: 'Add a new contact'
     }) }}
