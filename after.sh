@@ -55,3 +55,10 @@ echo "Symfony commands executed successfully."
 # Change CLI version to 7.4
 
 php74
+
+
+# Create log folder
+
+cd /var/log
+sudo mkdir dev
+sudo chmod 777 dev
