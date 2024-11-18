@@ -36,9 +36,6 @@
     }) }}
     </div>
 
-    {# <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
-    New contact
-    </button> #}
   </div>
 </div>
 
@@ -47,40 +44,6 @@
 </div>
 
 </div>
-<!-- Modal -->
-{# <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="formModalLabel">New contact</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      
-      <div class="modal-body">
-      {{ form_errors(form) }}
-
-        {{ form_start(form) }}       
-        {{ form_row(form.name) }}
-        {{ form_row(form.email) }}
-        
-<ul class="phones"
-    data-index="{{ form.phones|length > 0 ? form.phones|last.vars.name + 1 : 0 }}"
-    data-prototype="{{ form_widget(form.phones.vars.prototype)|e('html_attr') }}"
->
-</ul>
-{{ form_errors(form.phones) }}
-
-        {{ form_row(form.birthday) }} 
-
-      {{ form_end(form) }}  
-      
-      </div>
-    </div>
-  </div>
-</div>
- #}
-
-
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
