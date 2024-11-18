@@ -36,7 +36,7 @@ class ApiController extends AbstractController
             'attributes' => [
                 'id',
                 'name',
-                'phoneList',
+                'phones',
                 'birthday' => ['format' => 'd/m/Y'],
                 'phones'
             ]
