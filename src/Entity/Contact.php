@@ -6,8 +6,6 @@ use App\Repository\ContactRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
-use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 // use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Serializer;
@@ -19,16 +17,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass=ContactRepository::class)
  * @Assert\Cascade
  * @UniqueEntity("email")
- * @ApiResource(
- *      collectionOperations={
- *          "get"
- *      },
- *      itemOperations={
- *          "get"
- *      },
- *      attributes={
- *          "normalization_context"={"groups"={"contacts_read"}},
- *      }
  * )
  */
 
@@ -104,18 +92,6 @@ class Contact
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getPhoneList(): ?array
-    {
-        return $this->phoneList;
-    }
-
-    public function setPhoneList(array $phoneList): self
-    {
-        $this->phoneList = $phoneList;
 
         return $this;
     }

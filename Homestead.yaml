@@ -1,6 +1,6 @@
 ip: 192.168.56.56
-memory: 2048
-cpus: 2
+memory: 4096
+cpus: 4
 provider: virtualbox
 SpeakFriendAndEnter: true
 # authorize: ~/.ssh/id_rsa.pub
@@ -10,7 +10,7 @@ box: laravel/homestead
 box_version: "7.4"
 folders:
     -
-        map: ~/Documents/projects/symf_project
+        map: c:/fiducial/symf_project
         # map: 'C:\symf_project'
         to: /home/vagrant/symf_project
         # type: nfs
