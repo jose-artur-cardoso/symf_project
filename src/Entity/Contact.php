@@ -66,15 +66,20 @@ class Contact
     private $birthday;
    
     /**
-     * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="Contact", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @Assert\Valid()
+     * @ORM\Column(type="array")
      */
-    private Collection $phones;
+    private $phones;
 
-    public function __construct()
-    {
-        $this->phones = new ArrayCollection();
-    }
+    // /**
+    //  * @ORM\OneToMany(targetEntity=Phone::class, mappedBy="Contact", cascade={"persist", "remove"}, orphanRemoval=true)
+    //  * @Assert\Valid()
+    //  */
+    // private Collection $phones;
+
+    // public function __construct()
+    // {
+    //     $this->phones = new ArrayCollection();
+    // }
 
     public function setValues(array $values): void
     {
@@ -168,33 +173,14 @@ class Contact
         return $this;
     }
 
-    /**
-     * @return Collection<int, Phone>
-     */
-    public function getPhones(): Collection
+    public function getPhones(): array
     {
         return $this->phones;
     }
 
-    public function addPhone(Phone $phone): self
+    public function setPhones(array $phones): self
     {
-        if (!$this->phones->contains($phone)) {
-            $this->phones[] = $phone;
-            $phone->setContact($this);
-        }
-
-        return $this;
-    }
-
-    public function removePhone(Phone $phone): self
-    {
-        if ($this->phones->removeElement($phone)) {
-            // set the owning side to null (unless already changed)
-            if ($phone->getContact() === $this) {
-                $phone->setContact(null);
-            }
-        }
-
+        $this->phones = $phones;
         return $this;
     }
 

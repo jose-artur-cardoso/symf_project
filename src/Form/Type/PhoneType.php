@@ -18,7 +18,7 @@ class PhoneType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('number', TextType::class, [
+            ->add('phone', TextType::class, [
                 'label' => 'Phone Number',
             ]);
     }
@@ -27,7 +27,7 @@ class PhoneType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Phone::class,
+            'data_class' => TextType::class,
             // 'constraints' => [
             //     new Regex([
             //         'pattern' => '/^\d{10}$/', // Adjust this regex pattern as per your phone number format

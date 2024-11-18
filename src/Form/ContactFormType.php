@@ -12,6 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Form\Type\PhoneType;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class ContactFormType extends AbstractType
 {
@@ -22,13 +25,27 @@ class ContactFormType extends AbstractType
             ->add('email', EmailType::class)
             ->add('phones', CollectionType::class, [
                 'label' => false,
-                'entry_type' => PhoneType::class, // Use PhoneType for phone_list
-                'entry_options' => ['label' => false], // Disable the label for individual entries
+                'entry_type' => TextType::class, // Use PhoneType for phone_list
+                'entry_options' => [
+                    'label' => false,
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Phone number cannot be empty.',
+                        ]),
+                        new NotNull([
+                            'message' => 'Phone number cannot be null.',
+                        ]),
+                        new Regex([
+                            'pattern' => '/^\d{10}$/',  // 10 digits without any other characters (no "+" sign or spaces)
+                            'message' => 'Please enter a valid phone number with exactly 10 digits.'
+                        ]),
+                    ],
+                ], // Disable the label for individual entries
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
                 'prototype' => true,
-                'delete_empty' => true,
+                'delete_empty' => false,
                 'data_class' => null
             ])
             ->add('birthday', DateType::class, [

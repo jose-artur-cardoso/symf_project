@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ContactRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 
 class ApiController extends AbstractController
@@ -25,15 +26,21 @@ class ApiController extends AbstractController
     {
         $contacts = $this->contactRepository->findAll();
 
+        $context = [
+            DateTimeNormalizer::FORMAT_KEY => 'd/m/Y',  // Define the date format globally for DateTime fields
+        ];
+        
+        // dd($contacts);
         // Serialize contacts to JSON format
         $jsonContent = $serializer->serialize($contacts, 'json', [
             'attributes' => [
                 'id',
                 'name',
                 'phoneList',
-                'birthday' => ['format' => 'd/m/Y']
+                'birthday' => ['format' => 'd/m/Y'],
+                'phones'
             ]
-        ]);
+        ] + $context );
     
         return new JsonResponse($jsonContent, 200, [], true);
     }

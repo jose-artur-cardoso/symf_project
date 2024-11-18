@@ -76,9 +76,9 @@ class ContactController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
             
-            foreach ($contact->getPhones() as $phone) {
-                $phone->setContact($contact); // Ensure the relationship is set
-            }
+            // foreach ($contact->getPhones() as $phone) {
+            //     $phone->setContact($contact); // Ensure the relationship is set
+            // }
 
             $contactRepository->add($contact, true);
 

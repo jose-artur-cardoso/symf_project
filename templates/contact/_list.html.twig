@@ -21,7 +21,7 @@
             {% if contact.phones is not empty %}
             <ul>
                 {% for phone in contact.phones %}
-                    <li>{{ phone.number|french_phone_format }}</li>
+                    <li>{{ phone|french_phone_format }}</li>
                 {% endfor %}
             </ul>
             {% else %}
