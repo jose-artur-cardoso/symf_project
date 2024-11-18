@@ -60,10 +60,10 @@ class ContactRepository extends ServiceEntityRepository
             ->getScalarResult();
     }    
 
-    public function findPhoneListByTheSameName(string $name)
+    public function findPhonesByTheSameName(string $name)
     {
         return $this->createQueryBuilder('c')
-            ->select("c.phoneList")
+            ->select("c.phones")
             ->where('c.name = :name')
             ->setParameter('name', $name)
             ->getQuery()

@@ -61,12 +61,12 @@ class MergeContactsCommand extends Command
 
                 // Find the contacts with the same name
                 $contactsWithSameName = $contactRepository->findByTheSameName($contact['name']);
-                $phoneLists = $contactRepository->findPhoneListByTheSameName($contact['name']);
+                $phones = $contactRepository->findPhonesByTheSameName($contact['name']);
                 
 
-                $mergedPhoneList = array_reduce($phoneLists, function ($result, $current) {
-                    if (is_array($current['phoneList'])) {
-                        $result = array_merge($result, $current['phoneList']);
+                $mergedPhones = array_reduce($phones, function ($result, $current) {
+                    if (is_array($current['phones'])) {
+                        $result = array_merge($result, $current['phones']);
                     }
                     return $result;
                 }, []);
@@ -113,7 +113,7 @@ class MergeContactsCommand extends Command
                 
                 $mergedContact = new Contact();
                 $mergedContact->setValues($data);
-                $mergedContact->setPhoneList($mergedPhoneList);
+                $mergedContact->setPhones($mergedPhones);
                 
                 // If mergedContact is OK, we can delete all the duplicates
                 if($mergedContact)
