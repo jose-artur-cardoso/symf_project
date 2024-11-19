@@ -35,30 +35,20 @@ composer install --ignore-platform-req=php
 echo "Composer install completed successfully."
 
 # Run npm install
-echo "Running npm install..."
-npm install
-echo "npm install completed successfully."
+echo "Running yarn install..."
+yarn
+echo "yarn install completed successfully."
 
 # Run npm build
-echo "Running npm build..."
-npm run build
-echo "npm run build completed successfully."
+echo "Running yarn encore dev..."
+yarn encore dev
+echo "yarn encore dev completed successfully."
 
 # Symfony commands for database setup
 
 echo "Running Symfony commands for database setup..."
 php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:schema:update --force
-php bin/console doctrine:fixtures:load --no-interaction
+#php bin/console doctrine:fixtures:load --no-interaction
 echo "Symfony commands executed successfully."
 
-# Change CLI version to 7.4
-
-php74
-
-
-# Create log folder
-
-cd /var/log
-sudo mkdir dev
-sudo chmod 777 dev

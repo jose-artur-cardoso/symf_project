@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241118120916 extends AbstractMigration
+final class Version20241119023808 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,12 @@ final class Version20241118120916 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE contact CHANGE phones phones LONGTEXT NOT NULL COMMENT \'(DC2Type:array)\'');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_4C62E638E7927C74 ON contact (email)');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE contact CHANGE phones phones JSON DEFAULT NULL');
+        $this->addSql('DROP INDEX UNIQ_4C62E638E7927C74 ON contact');
     }
 }

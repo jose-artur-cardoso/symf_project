@@ -11,9 +11,12 @@ box_version: "7.4"
 folders:
     -
         map: c:/fiducial/symf_project
-        # map: 'C:\symf_project'
+        # map: ~/code/project1
         to: /home/vagrant/symf_project
-        # type: nfs
+        mount_options: ["mfsymlinks,dir_mode=0755,file_mode=0775"]
+        options:
+            :type: "rsync"
+            :rsync__exclude: [".git/", "vendor/", "node_modules/", "public/build/"]
 sites:
     -
         map: homestead.test
